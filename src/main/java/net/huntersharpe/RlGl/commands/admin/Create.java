@@ -1,5 +1,6 @@
 package net.huntersharpe.RlGl.commands.admin;
 
+import net.huntersharpe.RlGl.RedLightGreenLight;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -29,6 +30,14 @@ public class Create implements CommandExecutor {
             p.sendMessage(Texts.of(TextColors.RED, "ID name must be numeric."));
             return CommandResult.success();
         }
+        int id = Integer.parseInt(args[0]);
+        if(!arenaExists(id)){
+            p.sendMessage(Texts.of("An arena with that ID already exists!"));
+            return CommandResult.success();
+        }
+        p.sendMessage(Texts.of(TextColors.GRAY, "Creating Arena in arenas.conf..."));
+        RedLightGreenLight.getInstance().rootNode.getNode("arenas").setValue(id);
+        p.sendMessage(Texts.of(TextColors.GREEN, "Created!"));
         return CommandResult.success();
     }
     public void sendHelp(CommandSource src){
@@ -40,11 +49,17 @@ public class Create implements CommandExecutor {
         }
         int sz = str.length();
         for (int i = 0; i < sz; i++) {
-            if (Character.isDigit(str.charAt(i)) == false) {
+            if (!Character.isDigit(str.charAt(i))) {
                 return false;
             }
         }
         return true;
+    }
+    public boolean arenaExists(int id){
+        if(RedLightGreenLight.getInstance().rootNode.getNode("arenas").getChildrenList().contains(id)){
+            return true;
+        }
+        return false;
     }
 
 }

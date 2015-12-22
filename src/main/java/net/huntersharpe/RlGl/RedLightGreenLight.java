@@ -7,7 +7,9 @@ import net.huntersharpe.RlGl.commands.Leave;
 import net.huntersharpe.RlGl.commands.RlGl;
 import net.huntersharpe.RlGl.commands.admin.*;
 import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -20,6 +22,7 @@ import org.spongepowered.api.text.Texts;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.logging.Logger;
 
 /**
@@ -40,7 +43,7 @@ public class RedLightGreenLight {
     public File defaultConf;
 
     @Inject
-    public File arenas;
+    public File arenas = new File(configDir + "arenas.conf");
 
     @Inject
     @DefaultConfig(sharedRoot = false)
@@ -50,6 +53,12 @@ public class RedLightGreenLight {
     private Game game;
 
     public ConfigurationNode config = null;
+
+    private Path potentialFile = arenas.toPath();
+
+    private ConfigurationLoader<CommentedConfigurationNode> loader = HoconConfigurationLoader.builder().setPath(potentialFile).build();
+
+    public ConfigurationNode rootNode = loader.createEmptyNode(ConfigurationOptions.defaults());
 
     private static RedLightGreenLight instance = new RedLightGreenLight();
 
@@ -136,14 +145,15 @@ public class RedLightGreenLight {
             }
             if (!defaultConf.exists()) {
                 defaultConf.createNewFile();
-                config = configManager.load();
 
                 //TODO: Add config values
                 configManager.save(config);
             }
             if(!arenas.exists()){
                 arenas.createNewFile();
-            }
+                rootNode.setValue("arenas");
+
+        }
             config = configManager.load();
         } catch (IOException e) {
             logger.warning("Default Config could not be loaded/created!");
