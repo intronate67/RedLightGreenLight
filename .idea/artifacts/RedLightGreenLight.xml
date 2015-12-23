@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="RedLightGreenLight">
+    <output-path>$USER_HOME$/Desktop/forgeserver/mods</output-path>
+    <root id="archive" name="RedLightGreenLight.jar">
+      <element id="module-output" name="RedLightGreenLight" />
+    </root>
+  </artifact>
+</component>

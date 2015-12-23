@@ -22,21 +22,21 @@ public class Create implements CommandExecutor {
         }
         Player p = (Player)src;
         String[] args = arguments.toString().split(" ");
-        if(args.length != 1){
+        if(args.length != 2){
             sendHelp(p);
             return CommandResult.success();
         }
-        if(!isNumeric(args[0])) {
+        if(!isNumeric(args[1])) {
             p.sendMessage(Texts.of(TextColors.RED, "ID name must be numeric."));
             return CommandResult.success();
         }
-        int id = Integer.parseInt(args[0]);
+        int id = Integer.parseInt(args[1]);
         if(!arenaExists(id)){
             p.sendMessage(Texts.of("An arena with that ID already exists!"));
             return CommandResult.success();
         }
         p.sendMessage(Texts.of(TextColors.GRAY, "Creating Arena in arenas.conf..."));
-        RedLightGreenLight.getInstance().rootNode.getNode("arenas").setValue(id);
+        RedLightGreenLight.getInstance().config.getNode("arenas").setValue(id);
         p.sendMessage(Texts.of(TextColors.GREEN, "Created!"));
         return CommandResult.success();
     }
@@ -56,7 +56,7 @@ public class Create implements CommandExecutor {
         return true;
     }
     public boolean arenaExists(int id){
-        if(RedLightGreenLight.getInstance().rootNode.getNode("arenas").getChildrenList().contains(id)){
+        if(RedLightGreenLight.getInstance().config.getNode("arenas").getChildrenList().contains(id)){
             return true;
         }
         return false;
