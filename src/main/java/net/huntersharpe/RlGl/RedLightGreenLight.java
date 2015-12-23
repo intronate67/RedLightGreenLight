@@ -161,6 +161,7 @@ public class RedLightGreenLight {
                 .child(endCmd, "end", "stop")
                 .child(joinCmd, "join")
                 .child(leaveCmd, "leave", "quit")
+                .child(helpCmd, "help")
                 .build();
         game.getCommandManager().register(this, rlglCmd, "rlgl");
     }
