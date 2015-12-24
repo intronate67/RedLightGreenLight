@@ -1,6 +1,5 @@
 package net.huntersharpe.RlGl.commands;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -37,11 +36,11 @@ public class Help implements CommandExecutor {
                 "quit",
                 "rlgl"
         };
-        if(!ArrayUtils.contains(commands, args[1])){
-            src.sendMessage(Texts.of(TextColors.RED, args[1] + " is not a valid command."));
+        if(!Arrays.asList(commands).contains(args[0])){
+            src.sendMessage(Texts.of(TextColors.RED, args[0] + " is not a valid command."));
             return CommandResult.success();
         }
-        switch(args[1]){
+        switch(args[0]){
             case "delete":
                 src.sendMessage(Texts.of(TextColors.GREEN, "Usage: /rlgl <del|delete> <id>"));
                 src.sendMessage(Texts.of(TextColors.GREEN, "Deletes specified arena."));
