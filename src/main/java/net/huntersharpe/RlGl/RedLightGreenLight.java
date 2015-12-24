@@ -146,6 +146,7 @@ public class RedLightGreenLight {
                 .build();
         CommandSpec helpCmd = CommandSpec.builder()
                 .description(Texts.of("RlGl Help command"))
+                .arguments(GenericArguments.onlyOne(GenericArguments.string(Texts.of("command"))))
                 .executor(new Help())
                 .build();
         //Main Command
