@@ -6,14 +6,13 @@ import net.huntersharpe.RlGl.commands.Join;
 import net.huntersharpe.RlGl.commands.Leave;
 import net.huntersharpe.RlGl.commands.RlGl;
 import net.huntersharpe.RlGl.commands.admin.*;
-import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -25,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Created by Hunter Sharpe on 12/20/15.
@@ -34,24 +32,17 @@ import java.util.logging.Logger;
 public class RedLightGreenLight {
 
     @Inject
-    Logger logger;
+    @DefaultConfig(sharedRoot = true)
+    private File configuration = null;
 
     @Inject
-    @ConfigDir(sharedRoot = false)
-    private File configDir;
+    @DefaultConfig(sharedRoot = true)
+    private ConfigurationLoader<CommentedConfigurationNode> configurationLoader = null;
 
-    @Inject
-    @DefaultConfig(sharedRoot = false)
-    public File defaultConf;
-
-    @Inject
-    @DefaultConfig(sharedRoot = false)
-    private ConfigurationLoader<CommentedConfigurationNode> configManager;
+    public CommentedConfigurationNode configurationNode = null;
 
     @Inject
     private Game game = Sponge.getGame();
-
-    public ConfigurationNode config = null;
 
     private static RedLightGreenLight instance = new RedLightGreenLight();
 
@@ -59,42 +50,34 @@ public class RedLightGreenLight {
         return instance;
     }
 
-
-
     @Listener
     public void onPreInit(GamePreInitializationEvent e){
-        setupConfig();
+        try {
+            if(!configuration.exists()){
+
+                configuration.createNewFile();
+                configurationNode = configurationLoader.load();
+                configurationNode.getNode("rlgl", "arenas").setComment("Do not edit these values, Information stored about arenas is saved below.");
+                configurationLoader.save(configurationNode);
+            }
+            configurationNode = configurationLoader.load();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
     }
 
     @Listener
     public void onInit(GameInitializationEvent e){
         registerCommands();
     }
-    private void setupConfig() {
-        try {
-            if (!defaultConf.getParentFile().exists()) {
-                defaultConf.getParentFile().mkdir();
-            }
-            if (!defaultConf.exists()) {
-                defaultConf.createNewFile();
-
-                //TODO: Add config values
-                configManager.save(config);
-            }
-            config = configManager.load();
-        } catch (IOException e) {
-            logger.warning("Default Config could not be loaded/created!");
-        }
-    }
-
 
     public void registerCommands(){
         //Create Arena
         CommandSpec createCmd = CommandSpec.builder()
                 .permission("rlgl.admin.create")
                 .description(Texts.of("Create an arena."))
-                .arguments(GenericArguments.onlyOne(GenericArguments.integer(Texts.of("id"))))
-                .executor(new Create())
+                .arguments(GenericArguments.onlyOne(GenericArguments.integer(Texts.of("id"))), GenericArguments.string(Texts.of("name")))
+                .executor(new Create(this))
                 .build();
         //Delete Arena
         CommandSpec deleteCmd = CommandSpec.builder()
@@ -165,6 +148,10 @@ public class RedLightGreenLight {
                 .child(helpCmd, "help")
                 .build();
         game.getCommandManager().register(this, rlglCmd, "rlgl");
+    }
+
+    public CommentedConfigurationNode rootNode(){
+        return configurationNode;
     }
 
 }

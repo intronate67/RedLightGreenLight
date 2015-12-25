@@ -14,6 +14,12 @@ import org.spongepowered.api.text.format.TextColors;
  * Created by Hunter Sharpe on 12/20/15.
  */
 public class Create implements CommandExecutor {
+
+    public RedLightGreenLight plugin;
+
+    public Create(RedLightGreenLight pl){
+        this.plugin = pl;
+    }
     @Override
     public CommandResult execute(CommandSource src, CommandContext arguments) throws CommandException {
         if(!(src instanceof Player)){
@@ -21,28 +27,27 @@ public class Create implements CommandExecutor {
             return CommandResult.success();
         }
         Player p = (Player)src;
-        String[] args = arguments.toString().split(" ");
-        if(args.length != 2){
-            sendHelp(p);
-            return CommandResult.success();
-        }
-        if(!isNumeric(args[1])) {
+        if(!isNumeric(arguments.getOne("id").get().toString())) {
             p.sendMessage(Texts.of(TextColors.RED, "ID name must be numeric."));
+            p.sendMessage(Texts.of(arguments.getOne("id").get().toString()));
             return CommandResult.success();
         }
-        int id = Integer.parseInt(args[1]);
-        if(!arenaExists(id)){
+        int id = Integer.parseInt(arguments.getOne("id").get().toString());
+        if(arenaExists(id)){
             p.sendMessage(Texts.of("An arena with that ID already exists!"));
             return CommandResult.success();
         }
-        p.sendMessage(Texts.of(TextColors.GRAY, "Creating Arena in arenas.conf..."));
-        RedLightGreenLight.getInstance().config.getNode("arenas").setValue(id);
+        if(!isString(arguments.getOne("name").get().toString())){
+            p.sendMessage(Texts.of(TextColors.RED, arguments.getOne("name").get(), " is not a valid name. Name must be a string(s)."));
+            return CommandResult.success();
+        }
+        String name = arguments.getOne("name").get().toString();
+        p.sendMessage(Texts.of(TextColors.GRAY, "Creating Arena in config..."));
+        plugin.configurationNode.getNode("rlgl","arenas", id).setValue(name);
         p.sendMessage(Texts.of(TextColors.GREEN, "Created!"));
         return CommandResult.success();
     }
-    public void sendHelp(CommandSource src){
-        src.sendMessage(Texts.of(TextColors.RED, "Incorrect Usage! Use /rlgl help for more info."));
-    }
+
     public static boolean isNumeric(String str) {
         if (str == null) {
             return false;
@@ -55,11 +60,25 @@ public class Create implements CommandExecutor {
         }
         return true;
     }
-    public boolean arenaExists(int id){
-        if(RedLightGreenLight.getInstance().config.getNode("arenas").getChildrenList().contains(id)){
-            return true;
+
+    public static boolean isString(String str){
+        if (str == null){
+            return false;
         }
-        return false;
+        int sz = str.length();
+        for(int i = 0; i < sz; i++){
+            if(!Character.isAlphabetic(str.charAt(i))){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean arenaExists(int id){
+        if(!plugin.configurationNode.getNode("arenas").getChildrenList().contains(id)){
+            return false;
+        }
+        return true;
     }
 
 }
