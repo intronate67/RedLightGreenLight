@@ -101,6 +101,7 @@ public class ArenaManager {
 
     public void removeArena(int id){
         //TODO: Delete from memory and config.
+
     }
 
     public boolean isInGame(Player p) {

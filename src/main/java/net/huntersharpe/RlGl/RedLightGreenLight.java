@@ -80,7 +80,7 @@ public class RedLightGreenLight {
         CommandSpec deleteCmd = CommandSpec.builder()
                 .permission("rlgl.admin.delete")
                 .description(Text.of("Delete an arena"))
-                .arguments(GenericArguments.onlyOne(GenericArguments.integer(Text.of("id"))))
+                .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("name"))))
                 .executor(new Delete())
                 .build();
         //Force Start Game Command
