@@ -12,7 +12,7 @@ import java.util.*;
  */
 public class ArenaManager {
 
-    private static ArenaManager arenaManager;
+    public static ArenaManager arenaManager = new ArenaManager();
 
     private final Map<UUID, Vector3d> loc = new HashMap<>();
     private final Map<UUID, Inventory> inv = new HashMap<>();
@@ -21,15 +21,11 @@ public class ArenaManager {
 
     private int arenaSize = 0;
 
-    private ArenaManager(){}
-
-    public ArenaManager getArenaManager(){
-        if(this.arenaManager == null)
-            this.arenaManager = new ArenaManager();
-        return this.arenaManager;
+    public static ArenaManager getArenaManager(){
+        return arenaManager;
     }
 
-    public Arena getArena(int i){
+    public Arena getArena(UUID i){
         for(Arena a : this.arenas){
             if(a.getId() == i){
                 return a;
@@ -38,7 +34,7 @@ public class ArenaManager {
         return null;
     }
 
-    public void addPlayer(Player p, int i) {
+    public void addPlayer(Player p, UUID i) {
         Arena a = this.getArena(i);
         if (a == null) {
             p.sendMessage(Text.of("Invalid Arena"));
@@ -80,12 +76,12 @@ public class ArenaManager {
 
     }
 
-   public Arena createArena(int id, Vector3d corner1, Vector3d corner2, Vector3d start1, Vector3d start2, Vector3d finish1, Vector3d finish2, int size) {
+   public Arena createArena(String name, UUID id, Vector3d corner1, Vector3d corner2, Vector3d start1, Vector3d start2, Vector3d finish1, Vector3d finish2, int size) {
         this.arenaSize++;
 
-        Arena a = new Arena(id, corner1, corner2, start1, start2, finish1, finish2, size);
+        Arena a = new Arena(name, id, corner1, corner2, start1, start2, finish1, finish2, size);
         this.arenas.add(a);
-
+        //TODO: Write config values here.
         return a;
     }
 

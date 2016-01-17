@@ -1,6 +1,10 @@
 package net.huntersharpe.RlGl.commands.admin;
 
 import net.huntersharpe.RlGl.RedLightGreenLight;
+import net.huntersharpe.RlGl.commands.prompts.NamePrompt;
+import net.huntersharpe.conversationapi.Conversable;
+import net.huntersharpe.conversationapi.Conversation;
+import net.huntersharpe.conversationapi.ConversationFactory;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -18,6 +22,11 @@ public class Create implements CommandExecutor{
 
     public RedLightGreenLight plugin;
 
+    private ConversationFactory factory = new ConversationFactory(plugin.getGame());
+
+    private Conversation conv;
+
+
     public Create(RedLightGreenLight pl){
         this.plugin = pl;
     }
@@ -29,7 +38,8 @@ public class Create implements CommandExecutor{
         }
         Player p = (Player)src;
         //TODO: Start conversation below
-
+        conv = factory.withFirstPrompt(new NamePrompt()).withLocalEcho(false).buildConversation((Conversable) p);
+        conv.begin();
         return CommandResult.success();
     }
 

@@ -133,4 +133,8 @@ public class RedLightGreenLight {
         return configurationNode;
     }
 
+    public Game getGame(){
+        return game;
+    }
+
 }

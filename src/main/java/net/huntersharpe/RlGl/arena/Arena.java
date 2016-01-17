@@ -11,7 +11,8 @@ import java.util.UUID;
  */
 public class Arena {
 
-    private final int id;
+    private final String name;
+    private final UUID id;
     private final Vector3d corner1;
     private final Vector3d corner2;
     private final Vector3d start1;
@@ -21,7 +22,8 @@ public class Arena {
     private final int maxSize;
     private final List<UUID> players = new ArrayList<UUID>();
 
-    public Arena(int id, Vector3d corner1, Vector3d corner2, Vector3d start1, Vector3d start2, Vector3d finish1, Vector3d finish2, int maxSize) {
+    public Arena(String name, UUID id, Vector3d corner1, Vector3d corner2, Vector3d start1, Vector3d start2, Vector3d finish1, Vector3d finish2, int maxSize) {
+        this.name = name;
         this.id = id;
         this.corner1 = corner1;
         this.corner2 = corner2;
@@ -32,7 +34,11 @@ public class Arena {
         this.maxSize = maxSize;
     }
 
-    public int getId(){
+    public String getName(){
+        return name;
+    }
+
+    public UUID getId(){
         return this.id;
     }
 
