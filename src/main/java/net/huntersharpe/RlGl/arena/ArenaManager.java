@@ -3,7 +3,7 @@ package net.huntersharpe.RlGl.arena;
 import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.Inventory;
-import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.Text;
 
 import java.util.*;
 
@@ -41,15 +41,18 @@ public class ArenaManager {
     public void addPlayer(Player p, int i) {
         Arena a = this.getArena(i);
         if (a == null) {
-            p.sendMessage(Texts.of("Invalid Arena"));
+            p.sendMessage(Text.of("Invalid Arena"));
             return;
         }
 
         if (this.isInGame(p)) {
-            p.sendMessage(Texts.of("Cannot join more than 1 game!"));
+            p.sendMessage(Text.of("Cannot join more than 1 game!"));
             return;
         }
-
+        if(a.getPlayers().size() >= a.getSize()){
+            p.sendMessage(Text.of("Arena is already full"));
+            return;
+        }
         a.getPlayers().add(p.getUniqueId());
 
         //Put inventory and powerups here
@@ -67,7 +70,7 @@ public class ArenaManager {
         }
 
         if (a == null) {
-            p.sendMessage(Texts.of("Invalid operation!"));
+            p.sendMessage(Text.of("Invalid operation!"));
             return;
         }
 
@@ -77,10 +80,10 @@ public class ArenaManager {
 
     }
 
-   public Arena createArena(int id, Vector3d corner1, Vector3d corner2, Vector3d start1, Vector3d start2, Vector3d finish1, Vector3d finish2) {
+   public Arena createArena(int id, Vector3d corner1, Vector3d corner2, Vector3d start1, Vector3d start2, Vector3d finish1, Vector3d finish2, int size) {
         this.arenaSize++;
 
-        Arena a = new Arena(id, corner1, corner2, start1, start2, finish1, finish2);
+        Arena a = new Arena(id, corner1, corner2, start1, start2, finish1, finish2, size);
         this.arenas.add(a);
 
         return a;

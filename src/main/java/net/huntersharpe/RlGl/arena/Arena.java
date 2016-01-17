@@ -18,9 +18,10 @@ public class Arena {
     private final Vector3d start2;
     private final Vector3d finish1;
     private final Vector3d finish2;
+    private final int maxSize;
     private final List<UUID> players = new ArrayList<UUID>();
 
-    public Arena(int id, Vector3d corner1, Vector3d corner2, Vector3d start1, Vector3d start2, Vector3d finish1, Vector3d finish2) {
+    public Arena(int id, Vector3d corner1, Vector3d corner2, Vector3d start1, Vector3d start2, Vector3d finish1, Vector3d finish2, int maxSize) {
         this.id = id;
         this.corner1 = corner1;
         this.corner2 = corner2;
@@ -28,10 +29,15 @@ public class Arena {
         this.start2 = start2;
         this.finish1 = finish1;
         this.finish2 = finish2;
+        this.maxSize = maxSize;
     }
 
     public int getId(){
         return this.id;
+    }
+
+    public int getSize(){
+        return this.maxSize;
     }
 
     public List<UUID> getPlayers(){
