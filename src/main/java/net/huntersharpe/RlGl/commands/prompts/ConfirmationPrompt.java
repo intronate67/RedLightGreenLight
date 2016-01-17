@@ -37,7 +37,12 @@ public class ConfirmationPrompt extends BooleanPrompt{
 
     @Override
     protected Prompt acceptValidatedInput(ConversationContext context, boolean input) {
-        ArenaManager.getArenaManager().createArena(name, id, corner1, corner2, start1, start2, finish1, finish2, maxSize);
+        try{
+            ArenaManager.getArenaManager().createArena(name, id, corner1, corner2, start1, start2, finish1, finish2, maxSize);
+        }catch (Exception e){
+            context.getForWhom().sendRawMessage(Text.of(TextColors.RED, "Error in creating your arena in config. Check console."));
+            e.printStackTrace();
+        }
         context.getForWhom().sendRawMessage(Text.of(TextColors.GREEN, "Arena: ", name, " was created and saved in config."));
         return null;
     }

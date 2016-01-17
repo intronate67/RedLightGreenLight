@@ -1,5 +1,6 @@
 package net.huntersharpe.RlGl.commands.prompts;
 
+import net.huntersharpe.RlGl.RedLightGreenLight;
 import net.huntersharpe.conversationapi.ConversationContext;
 import net.huntersharpe.conversationapi.Prompt;
 import net.huntersharpe.conversationapi.StringPrompt;
@@ -19,6 +20,9 @@ public class NamePrompt extends StringPrompt{
 
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
+        if(RedLightGreenLight.getInstance().rootNode().getNode("rlgl", "arenas").getChildrenList().contains(input)){
+            return new NamePrompt();
+        }
         UUID id = UUID.randomUUID();
         ConfirmationPrompt.instance.name = input;
         ConfirmationPrompt.instance.id = id;

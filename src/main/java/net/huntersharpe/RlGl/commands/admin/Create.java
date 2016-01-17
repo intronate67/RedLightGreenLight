@@ -37,7 +37,6 @@ public class Create implements CommandExecutor{
             return CommandResult.success();
         }
         Player p = (Player)src;
-        //TODO: Start conversation below
         conv = factory.withFirstPrompt(new NamePrompt()).withLocalEcho(false).buildConversation((Conversable) p);
         conv.begin();
         return CommandResult.success();

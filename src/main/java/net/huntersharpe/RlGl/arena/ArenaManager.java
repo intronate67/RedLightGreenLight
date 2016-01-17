@@ -1,6 +1,8 @@
 package net.huntersharpe.RlGl.arena;
 
 import com.flowpowered.math.vector.Vector3d;
+import net.huntersharpe.RlGl.RedLightGreenLight;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.text.Text;
@@ -21,6 +23,8 @@ public class ArenaManager {
 
     private int arenaSize = 0;
 
+    private CommentedConfigurationNode rootNode = RedLightGreenLight.getInstance().rootNode();
+    private CommentedConfigurationNode arenaNode;
     public static ArenaManager getArenaManager(){
         return arenaManager;
     }
@@ -76,17 +80,27 @@ public class ArenaManager {
 
     }
 
-   public Arena createArena(String name, UUID id, Vector3d corner1, Vector3d corner2, Vector3d start1, Vector3d start2, Vector3d finish1, Vector3d finish2, int size) {
+   public Arena createArena(String name, UUID id, Vector3d corner1, Vector3d corner2, Vector3d start1, Vector3d start2, Vector3d finish1, Vector3d finish2, int size) throws Exception {
         this.arenaSize++;
 
         Arena a = new Arena(name, id, corner1, corner2, start1, start2, finish1, finish2, size);
         this.arenas.add(a);
         //TODO: Write config values here.
+       rootNode.getNode("rlgl", "arenas").setValue(name);
+       arenaNode = rootNode.getNode("rlgl", "arenas", name);
+       arenaNode.getNode("id").setValue(id);
+       arenaNode.getNode("corner1").setValue(corner1);
+       arenaNode.getNode("corner2").setValue(corner2);
+       arenaNode.getNode("start1").setValue(start1);
+       arenaNode.getNode("start2").setValue(start2);
+       arenaNode.getNode("finish1").setValue(finish1);
+       arenaNode.getNode("finish2").setValue(finish2);
+       arenaNode.getNode("maxsize").setValue(size);
         return a;
     }
 
     public void removeArena(int id){
-
+        //TODO: Delete from memory and config.
     }
 
     public boolean isInGame(Player p) {
