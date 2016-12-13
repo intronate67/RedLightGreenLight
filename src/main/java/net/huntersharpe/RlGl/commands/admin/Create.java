@@ -1,10 +1,29 @@
+/*This file is part of RedLightGreenLight, licensed under the MIT License (MIT).
+*
+* Copyright (c) 2016 Hunter Sharpe
+* Copyright (c) contributors
+
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+* THE SOFTWARE.
+*/
 package net.huntersharpe.RlGl.commands.admin;
 
 import net.huntersharpe.RlGl.RedLightGreenLight;
-import net.huntersharpe.RlGl.commands.prompts.NamePrompt;
-import net.huntersharpe.conversationapi.Conversable;
-import net.huntersharpe.conversationapi.Conversation;
-import net.huntersharpe.conversationapi.ConversationFactory;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -14,62 +33,40 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import java.io.IOException;
 
-/**
- * Created by Hunter Sharpe on 12/20/15.
- */
 public class Create implements CommandExecutor{
 
-    public RedLightGreenLight plugin;
-
-    private ConversationFactory factory = new ConversationFactory(plugin.getGame());
-
-    private Conversation conv;
-
-
+    public RedLightGreenLight plugin = new RedLightGreenLight();
+    //Move to conversation style of arena building.
     public Create(RedLightGreenLight pl){
         this.plugin = pl;
     }
     @Override
-    public CommandResult execute(CommandSource src, CommandContext arguments) throws CommandException {
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if(!(src instanceof Player)){
             src.sendMessage(Text.of(TextColors.RED, "Only players can run this command!"));
             return CommandResult.success();
         }
-        Player p = (Player)src;
-        conv = factory.withFirstPrompt(new NamePrompt()).withLocalEcho(false).buildConversation((Conversable) p);
-        conv.begin();
+        Player player = (Player) src;
+        if(!arenaExists(args.<String>getOne("id").get())){
+            String id = args.<String>getOne("id").get();
+            plugin.rootNode().getNode(id, "name").setValue(id);
+            try {
+                plugin.getConfigurationLoader().save(plugin.rootNode());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            player.sendMessage(Text.of(TextColors.GREEN, "Arena created, for it to work please set boundaries with /rlgl set"));
+            return CommandResult.success();
+        }
+        player.sendMessage(Text.of(TextColors.RED, "An arena with that id already exists."));
         return CommandResult.success();
     }
 
-    public static boolean isNumeric(String str) {
-        if (str == null) {
-            return false;
-        }
-        int sz = str.length();
-        for (int i = 0; i < sz; i++) {
-            if (!Character.isDigit(str.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean isString(String str){
-        if (str == null){
-            return false;
-        }
-        int sz = str.length();
-        for(int i = 0; i < sz; i++){
-            if(!Character.isAlphabetic(str.charAt(i))){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean arenaExists(int id){
-        if(plugin.configurationNode.getNode("arenas").getChildrenList().contains(id)){
+    //Remove double negative
+    public boolean arenaExists(String id){
+        if(!plugin.rootNode().getNode("arenas").getNode(id).isVirtual()){
             return true;
         }
         return false;

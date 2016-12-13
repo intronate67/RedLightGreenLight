@@ -21,17 +21,7 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
 */
-package net.huntersharpe.RlGl.commands.admin;
+package net.huntersharpe.RlGl.events;
 
-import org.spongepowered.api.command.CommandException;
-import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.spec.CommandExecutor;
-
-public class Stop implements CommandExecutor {
-    @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        return CommandResult.success();
-    }
+public class SignListener {
 }

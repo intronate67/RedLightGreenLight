@@ -21,36 +21,37 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
 */
-package net.huntersharpe.RlGl.commands.admin;
+package net.huntersharpe.RlGl.events;
 
-import net.huntersharpe.RlGl.RedLightGreenLight;
-import org.spongepowered.api.command.CommandException;
-import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.entity.MoveEntityEvent;
 
-/**
- * Created by Hunter Sharpe on 12/20/15.
- */
-public class Delete implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
-    private RedLightGreenLight plugin = new RedLightGreenLight();
+public class PlayerListener {
 
-    @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if(!(src instanceof Player)){
-            src.sendMessage(Text.of(TextColors.RED, "Only players can run this command!"));
-            return CommandResult.success();
-        }
-        if(!RedLightGreenLight.getInstance().rootNode().getChildrenList().contains(args.getOne("name").get())){
-            src.sendMessage(Text.of(TextColors.RED, "Arena doesn't exist in config."));
-            return CommandResult.success();
-        }
-        Player p = (Player)src;
-        return CommandResult.success();
+    private static PlayerListener instance = new PlayerListener();
+
+    public static PlayerListener getInstance(){
+        return instance;
     }
+
+    private List<UUID> frozen = new ArrayList<>();
+
+    public List<UUID> getFrozenMap(){
+        return frozen;
+    }
+
+    @Listener
+    public void onMove(MoveEntityEvent event){
+        if(event.getTargetEntity() instanceof Player){
+            if(frozen.contains(event.getTargetEntity().getUniqueId())){
+                event.setToTransform(event.getFromTransform());
+            }
+        }
+    }
+
 }
